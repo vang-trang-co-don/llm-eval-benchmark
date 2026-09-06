@@ -6,6 +6,14 @@
 - **Secondary Tag:** `[SEMANTIC-HALLUC]`
 - **Model Evaluated:** Hypothetical Synthetic LLM Output
 
+### Evaluation Scorecard
+| Metric | Score (1-5) | Operational Justification |
+| :--- | :---: | :--- |
+| **Instruction Following** | 1/5 | Direct violation of third-party library constraint. |
+| **Truthfulness / Logic** | 1/5 | Hallucinated non-existent library method. |
+| **Code Executability** | 1/5 | Fails immediately with ImportError / AttributeError. |
+| **Rationale Quality** | 5/5 | Detailed distinction between monolithic JSON and JSONL streaming. |
+
 ## 2. Input Prompt
 > "Write a Python script to read and process a 50GB log file in **JSONL (JSON Lines)** format. 
 > Constraint: Do NOT use any third-party libraries (standard library only)."
@@ -43,13 +51,11 @@ def stream_jsonl(filepath: str) -> Iterator[Dict[str, Any]]:
     """Streams a JSONL file line-by-line to maintain O(1) memory footprint."""
     with open(filepath, 'r', encoding='utf-8') as f:
         for line in f:
-            # Skip empty lines
             if line.strip():
                 yield json.loads(line)
 
 def process_logs(filepath: str):
     for record in stream_jsonl(filepath):
-        # Process each record without loading the 50GB file into RAM
         if 'event_type' in record:
             print(record['event_type'])
 ```

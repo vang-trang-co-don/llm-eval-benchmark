@@ -6,6 +6,14 @@
 - **Secondary Tag:** `[LOGIC-EDGE]`
 - **Model Evaluated:** Hypothetical Synthetic LLM Output
 
+### Evaluation Scorecard
+| Metric | Score (1-5) | Operational Justification |
+| :--- | :---: | :--- |
+| **Instruction Following** | 2/5 | Violated strict $O(N)$ runtime constraint. |
+| **Truthfulness / Logic** | 2/5 | Brute force logic collapses at scale (TLE). |
+| **Code Executability** | 4/5 | Code runs but fails boundary performance testing. |
+| **Rationale Quality** | 5/5 | Mathematically verified asymptotic operation limits. |
+
 ## 2. Input Prompt
 > "Write a Python function `find_subarray_sum(nums, target)` that returns the start and end indices of **ANY valid** continuous subarray that sums to `target`. 
 > Constraints: `nums` can contain up to $10^5$ integers (both positive and negative). Time complexity must be strictly $O(N)$."
@@ -49,7 +57,7 @@ def find_subarray_sum(nums: List[int], target: int) -> List[int]:
         if complement in prefix_map:
             return [prefix_map[complement] + 1, current_index]
             
-        # Store the first occurrence to maintain the longest/first valid subarray logic
+        # Store the first occurrence to maintain valid subarray logic
         if current_sum not in prefix_map:
             prefix_map[current_sum] = current_index
             

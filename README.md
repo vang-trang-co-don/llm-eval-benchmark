@@ -12,14 +12,15 @@ Evaluations in this repository follow the **HHH (Helpful, Honest, Harmless)** al
 
 ## Mock Grading Rubric
 | Dimension | Weight | Criteria for 5/5 (Excellent) |
-| :--- | :--- | :--- |
+| :--- | :---: | :--- |
 | **Instruction Following** | 30% | Strict adherence to all negative constraints and formatting rules. |
-| **Truthfulness / Honesty** | 30% | Zero hallucinations; explicitly states uncertainty if applicable. |
-| **Logical Rigor** | 20% | Code handles edge-cases (NULLs, empty arrays, negative bounds). |
-| **Rationale Quality** | 20% | CER framework applied; algorithmic complexity mathematically proven. |
+| **Truthfulness / Logic** | 30% | Zero hallucinations; resilient against boundary conditions and edge cases. |
+| **Code Executability** | 20% | Code executes cleanly; optimal asymptotic time/space complexity. |
+| **Rationale Quality** | 20% | CER framework applied; mathematical and systemic proof provided. |
 
 ## Error Taxonomy
-- **[LOGIC-EDGE]**: Boundary value failure, infinite loops, off-by-one errors, NULL traps.
+- **[LOGIC-EDGE]**: Boundary value failure, infinite loops, off-by-one errors, state-space collapse.
+- **[LOGIC-SEMANTIC]**: Relational logic traps, Three-Valued Logic (3VL) failures, query anti-patterns.
 - **[PERF-DEGRADE]**: Sub-optimal algorithmic complexity (e.g., $O(N^2)$ when $O(N)$ is requested/feasible).
 - **[CONSTRAINT-NEG]**: Explicit negative constraint violation (e.g., using unauthorized libraries).
 - **[SEMANTIC-HALLUC]**: Inventing non-existent parameters, functions, or documentation APIs.
