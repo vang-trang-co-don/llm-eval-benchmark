@@ -4,7 +4,7 @@
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![Data Format](https://img.shields.io/badge/Dataset-DPO%20JSONL-blue.svg)
 
-A production-grade benchmark portfolio demonstrating rigorous evaluation, error taxonomy classification, and structured technical rationale authoring for synthetic Large Language Model (LLM) outputs.
+A production-grade benchmark portfolio demonstrating rigorous evaluation, error taxonomy classification, and structured technical rationale authoring for synthetic Large Language Model (LLM) outputs across Full-Stack, Database, and Bilingual NLP domains.
 
 ## Evaluation Framework
 Evaluations follow **HHH (Helpful, Honest, Harmless)** alignment principles, **Pairwise Preference Optimization (DPO)**, and the **CER (Claim - Evidence - Reasoning)** rationale structure:
@@ -21,6 +21,7 @@ Evaluations follow **HHH (Helpful, Honest, Harmless)** alignment principles, **P
 | [**Case 02**](./audits/02_sql_semantic_null_trap.md) | SQL / Relational Databases | Single Audit | `[LOGIC-SEMANTIC]` | ANSI SQL Three-Valued Logic (3VL) & NULL trap mitigation. |
 | [**Case 03**](./audits/03_negative_constraint_hallucination.md) | Python / Systems I/O | Single Audit | `[CONSTRAINT-NEG]` | Negative constraint verification & $O(1)$ JSONL streaming. |
 | [**Case 04**](./audits/04_vietnamese_bilingual_localization.md) | Vietnamese / Bilingual NLP | Pairwise (DPO) | `[REGISTER-MISMATCH]` | Administrative register fidelity & Labor Code terminology. |
+| [**Case 05**](./audits/05_javascript_async_event_loop_trap.md) | JavaScript / Node.js QA | Single Audit | `[LOGIC-EDGE]` | V8 Event Loop, `forEach` async race conditions & sequential flow. |
 
 ## Production Dataset (`data/preference_dataset.jsonl`)
 All audit cases are formatted in machine-readable JSONL format for direct consumption in DPO and RLHF training pipelines:
@@ -30,13 +31,13 @@ All audit cases are formatted in machine-readable JSONL format for direct consum
   "chosen": "...",
   "rejected": "...",
   "critique": "Structured CER Rationale...",
-  "taxonomy": ["PERF-DEGRADE", "LOGIC-EDGE"],
+  "taxonomy": ["LOGIC-EDGE", "RUNTIME-ASYNC-TRAP"],
   "preference_strength": "significantly_better"
 }
 ```
 
 ## Automated Verification Suite
-To execute the automated regression suite locally:
+To execute the automated regression suite locally (testing Python logic, SQLite in-memory null invariants, and JSONL schemas):
 ```bash
 python3 verify_cases.py
 ```
