@@ -1,31 +1,42 @@
 # LLM Technical Evaluation & Logic Auditing Benchmark
 
-A curated benchmark portfolio demonstrating rigorous evaluation, error taxonomy classification, and structured technical rationale authoring for synthetic Large Language Model (LLM) outputs.
+![Verification Suite](https://github.com/vang-trang-co-don/llm-eval-benchmark/actions/workflows/ci.yml/badge.svg)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Data Format](https://img.shields.io/badge/Dataset-DPO%20JSONL-blue.svg)
+
+A production-grade benchmark portfolio demonstrating rigorous evaluation, error taxonomy classification, and structured technical rationale authoring for synthetic Large Language Model (LLM) outputs.
 
 ## Evaluation Framework
-Evaluations in this repository follow the **HHH (Helpful, Honest, Harmless)** alignment criteria and the **CER (Claim - Evidence - Reasoning)** rationale structure:
+Evaluations follow **HHH (Helpful, Honest, Harmless)** alignment principles, **Pairwise Preference Optimization (DPO)**, and the **CER (Claim - Evidence - Reasoning)** rationale structure:
 
-1. **Claim:** Explicitly state the category of failure, boundary violation, or logical inconsistency.
-2. **Evidence:** Isolate specific lines of generated code, execution traces, or guideline contradictions.
-3. **Reasoning:** Provide algorithmic proof explaining *why* the output fails.
-4. **Ground Truth:** Supply an optimized, production-grade correction adhering strictly to all prompt constraints.
+1. **Claim:** Explicitly identify the failure taxonomy, constraint violation, or semantic degradation.
+2. **Evidence:** Isolate specific lines of code, execution traces, or guideline contradictions.
+3. **Reasoning:** Deliver formal computational/linguistic proofs explaining *why* the response fails.
+4. **Ground Truth / Chosen Response:** Provide the production-ready corrected output.
 
-## Mock Grading Rubric
-| Dimension | Weight | Criteria for 5/5 (Excellent) |
-| :--- | :---: | :--- |
-| **Instruction Following** | 30% | Strict adherence to all negative constraints and formatting rules. |
-| **Truthfulness / Logic** | 30% | Zero hallucinations; resilient against boundary conditions and edge cases. |
-| **Code Executability** | 20% | Code executes cleanly; optimal asymptotic time/space complexity. |
-| **Rationale Quality** | 20% | CER framework applied; mathematical and systemic proof provided. |
+## Benchmark Case Studies
+| Case | Target Domain | Mode | Primary Taxonomy | Key Focus |
+| :---: | :--- | :---: | :---: | :--- |
+| [**Case 01**](./audits/01_python_complexity_edge_case.md) | Python / Algorithms | Single Audit | `[PERF-DEGRADE]` | $O(N^2)$ to $O(N)$ prefix sum refactor & boundary safety. |
+| [**Case 02**](./audits/02_sql_semantic_null_trap.md) | SQL / Relational Databases | Single Audit | `[LOGIC-SEMANTIC]` | ANSI SQL Three-Valued Logic (3VL) & NULL trap mitigation. |
+| [**Case 03**](./audits/03_negative_constraint_hallucination.md) | Python / Systems I/O | Single Audit | `[CONSTRAINT-NEG]` | Negative constraint verification & $O(1)$ JSONL streaming. |
+| [**Case 04**](./audits/04_vietnamese_bilingual_localization.md) | Vietnamese / Bilingual NLP | Pairwise (DPO) | `[REGISTER-MISMATCH]` | Administrative register fidelity & Labor Code terminology. |
 
-## Error Taxonomy
-- **[LOGIC-EDGE]**: Boundary value failure, infinite loops, off-by-one errors, state-space collapse.
-- **[LOGIC-SEMANTIC]**: Relational logic traps, Three-Valued Logic (3VL) failures, query anti-patterns.
-- **[PERF-DEGRADE]**: Sub-optimal algorithmic complexity (e.g., $O(N^2)$ when $O(N)$ is requested/feasible).
-- **[CONSTRAINT-NEG]**: Explicit negative constraint violation (e.g., using unauthorized libraries).
-- **[SEMANTIC-HALLUC]**: Inventing non-existent parameters, functions, or documentation APIs.
+## Production Dataset (`data/preference_dataset.jsonl`)
+All audit cases are formatted in machine-readable JSONL format for direct consumption in DPO and RLHF training pipelines:
+```json
+{
+  "prompt": "...",
+  "chosen": "...",
+  "rejected": "...",
+  "critique": "Structured CER Rationale...",
+  "taxonomy": ["PERF-DEGRADE", "LOGIC-EDGE"],
+  "preference_strength": "significantly_better"
+}
+```
 
-## Case Studies
-- [Case 01: Algorithmic Inefficiency & Boundary Failure in Python](./audits/01_python_complexity_edge_case.md)
-- [Case 02: SQL Semantic Flaw & NULL Handling Trap](./audits/02_sql_semantic_null_trap.md)
-- [Case 03: Negative Constraint Violation & I/O Streaming Hallucination](./audits/03_negative_constraint_hallucination.md)
+## Automated Verification Suite
+To execute the automated regression suite locally:
+```bash
+python3 verify_cases.py
+```
