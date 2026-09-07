@@ -74,6 +74,76 @@ class TestBenchmarkSuite(unittest.TestCase):
         self.assertEqual(len(records), 2)
         self.assertEqual(records[0]["event_id"], 1)
 
+    def test_case_05_javascript_event_loop(self):
+        """Case 05: Executes Node.js via subprocess to prove forEach race condition vs for...of."""
+        import shutil
+        import subprocess
+
+        if not shutil.which("node"):
+            self.skipTest("Node.js runtime not found on host. Skipping live JS execution test.")
+
+        js_payload = """
+        // 1. Flawed model implementation (forEach race condition)
+        async function flawed(userIds, fetcher) {
+            const results = [];
+            userIds.forEach(async (id) => {
+                const data = await fetcher(id);
+                results.push(data);
+            });
+            return results; // Returns prematurely
+        }
+
+        // 2. Ground truth implementation (for...of sequential loop)
+        async function groundTruth(userIds, fetcher) {
+            const results = [];
+            for (const id of userIds) {
+                const data = await fetcher(id);
+                results.push(data);
+            }
+            return results;
+        }
+
+        const mockFetcher = (id) => new Promise(resolve => setTimeout(() => resolve(`user_data_${id}`), 15));
+
+        async function runBenchmark() {
+            const ids = ['u1', 'u2'];
+
+            // 1. Chạy hàm lỗi và SNAPSHOT NGAY LẬP TỨC độ dài khi hàm vừa resolve
+            const flawedRes = await flawed(ids, mockFetcher);
+            const flawedLengthAtReturn = flawedRes.length; // Phải là 0 tại thời điểm resolve
+
+            // 2. Chạy Ground Truth (mất 15ms + 15ms = 30ms)
+            const gtRes = await groundTruth(ids, mockFetcher);
+
+            console.log(JSON.stringify({
+                flawed_length_at_return: flawedLengthAtReturn,
+                gt_length: gtRes.length,
+                gt_results: gtRes
+            }));
+        }
+        runBenchmark();
+        """
+
+        proc = subprocess.run(
+            ["node", "-e", js_payload],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        
+        result_data = json.loads(proc.stdout.strip())
+
+        # Khẳng định tại thời điểm return, hàm lỗi trả về mảng rỗng (vi phạm logic)
+        self.assertEqual(
+            result_data["flawed_length_at_return"], 
+            0, 
+            "Flawed forEach must return an empty array at the moment of resolution."
+        )
+
+        # Khẳng định Ground Truth trả về đầy đủ 2 phần tử tuần tự
+        self.assertEqual(result_data["gt_length"], 2)
+        self.assertEqual(result_data["gt_results"], ["user_data_u1", "user_data_u2"])
+
     def test_preference_dataset_schema(self):
         """Dataset Integrity: Validates DPO JSONL formatting, keys, and row count."""
         dataset_path = Path("data/preference_dataset.jsonl")
